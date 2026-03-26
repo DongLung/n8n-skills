@@ -17,7 +17,8 @@ n8n-mcp provides tools organized into categories:
 2. **Configuration Validation** → [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
 3. **Workflow Management** → [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)
 4. **Template Library** - Search and deploy 2,700+ real workflows
-5. **Documentation & Guides** - Tool docs, AI agent guide, Code node guides
+5. **Data Tables** - Manage n8n data tables and rows (`n8n_manage_datatable`)
+6. **Documentation & Guides** - Tool docs, AI agent guide, Code node guides
 
 ---
 
@@ -34,6 +35,8 @@ n8n-mcp provides tools organized into categories:
 | `n8n_update_partial_workflow` | Editing workflows (MOST USED!) | 50-200ms |
 | `validate_workflow` | Checking complete workflow | 100-500ms |
 | `n8n_deploy_template` | Deploy template to n8n instance | 200-500ms |
+| `n8n_manage_datatable` | Managing data tables and rows | 50-500ms |
+| `n8n_autofix_workflow` | Auto-fix validation errors | 200-1500ms |
 
 ---
 
@@ -379,7 +382,7 @@ See [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md) for:
 ### Workflow Management
 See [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md) for:
 - n8n_create_workflow
-- n8n_update_partial_workflow (17 operation types!)
+- n8n_update_partial_workflow (18 operation types!)
 - Smart parameters (branch, case)
 - AI connection types (8 types)
 - Workflow activation (activateWorkflow/deactivateWorkflow)
@@ -448,6 +451,73 @@ n8n_deploy_template({
 
 ---
 
+## Data Table Management
+
+### n8n_manage_datatable
+
+Unified tool for managing n8n data tables and rows. Supports CRUD operations on tables and rows with filtering, pagination, and dry-run support.
+
+**Table Actions**: `createTable`, `listTables`, `getTable`, `updateTable`, `deleteTable`
+**Row Actions**: `getRows`, `insertRows`, `updateRows`, `upsertRows`, `deleteRows`
+
+```javascript
+// Create a data table
+n8n_manage_datatable({
+  action: "createTable",
+  name: "Contacts",
+  columns: [
+    {name: "email", type: "string"},
+    {name: "score", type: "number"}
+  ]
+})
+
+// Get rows with filter
+n8n_manage_datatable({
+  action: "getRows",
+  tableId: "dt-123",
+  filter: {
+    filters: [{columnName: "status", condition: "eq", value: "active"}]
+  },
+  limit: 50
+})
+
+// Insert rows
+n8n_manage_datatable({
+  action: "insertRows",
+  tableId: "dt-123",
+  data: [{email: "a@b.com", score: 10}],
+  returnType: "all"
+})
+
+// Update with dry run (preview changes)
+n8n_manage_datatable({
+  action: "updateRows",
+  tableId: "dt-123",
+  filter: {filters: [{columnName: "score", condition: "lt", value: 5}]},
+  data: {status: "inactive"},
+  dryRun: true
+})
+
+// Upsert (update or insert)
+n8n_manage_datatable({
+  action: "upsertRows",
+  tableId: "dt-123",
+  filter: {filters: [{columnName: "email", condition: "eq", value: "a@b.com"}]},
+  data: {score: 15},
+  returnData: true
+})
+```
+
+**Filter conditions**: `eq`, `neq`, `like`, `ilike`, `gt`, `gte`, `lt`, `lte`
+
+**Best practices**:
+- Use `dryRun: true` before bulk updates/deletes to verify filter correctness
+- Define column types upfront (`string`, `number`, `boolean`, `date`)
+- Use `returnType: "count"` (default) for insertRows to minimize response size
+- `deleteRows` requires a filter - cannot delete all rows without one
+
+---
+
 ## Self-Help Tools
 
 ### Get Tool Documentation
@@ -473,6 +543,9 @@ tools_documentation({topic: "python_code_node_guide", depth: "full"})
 // Comprehensive AI workflow guide
 ai_agents_guide()
 // Returns: Architecture, connections, tools, validation, best practices
+
+// Or via tools_documentation
+tools_documentation({topic: "ai_agents_guide", depth: "full"})
 ```
 
 ### Health Check
@@ -498,14 +571,15 @@ n8n_health_check({mode: "diagnostic"})
 
 **Requires n8n API** (N8N_API_URL + N8N_API_KEY):
 - n8n_create_workflow
-- n8n_update_partial_workflow
+- n8n_update_partial_workflow, n8n_update_full_workflow
 - n8n_validate_workflow (by ID)
-- n8n_list_workflows, n8n_get_workflow
+- n8n_list_workflows, n8n_get_workflow, n8n_delete_workflow
 - n8n_test_workflow
 - n8n_executions
 - n8n_deploy_template
 - n8n_workflow_versions
 - n8n_autofix_workflow
+- n8n_manage_datatable
 
 If API tools unavailable, use templates and validation-only workflows.
 
@@ -616,6 +690,8 @@ validate_node({nodeType: "nodes-base.webhook", config: {}, mode: "minimal"})
 6. **Auto-sanitization** runs on ALL nodes during updates
 7. Workflows can be **activated via API** (`activateWorkflow` operation)
 8. Workflows are built **iteratively** (56s avg between edits)
+9. **Data tables** managed with `n8n_manage_datatable` (CRUD + filtering)
+10. **AI agent guide** available via `ai_agents_guide()` tool
 
 **Common Workflow**:
 1. search_nodes → find node

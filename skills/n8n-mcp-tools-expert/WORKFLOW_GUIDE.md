@@ -83,7 +83,7 @@ n8n_create_workflow({
 
 **Common pattern**: 56s average between edits (iterative building!)
 
-### 17 Operation Types
+### 18 Operation Types
 
 **Node Operations** (6 types):
 1. `addNode` - Add new node
@@ -109,6 +109,9 @@ n8n_create_workflow({
 **Activation Operations** (2 types):
 16. `activateWorkflow` - Activate workflow for automatic execution
 17. `deactivateWorkflow` - Deactivate workflow
+
+**Project Management Operations** (1 type):
+18. `transferWorkflow` - Transfer workflow to a different project (enterprise/cloud)
 
 ### Intent Parameter (IMPORTANT!)
 
@@ -198,16 +201,16 @@ n8n_update_partial_workflow({
 // - ai_textSplitter
 ```
 
-### Property Removal with undefined
+### Property Removal with null
 
-Remove properties by setting them to `undefined`:
+Remove properties by setting them to `null`:
 
 ```javascript
 // Remove a property
 {
   type: "updateNode",
   nodeName: "HTTP Request",
-  updates: { onError: undefined }
+  updates: { onError: null }
 }
 
 // Migrate from deprecated property
@@ -215,7 +218,7 @@ Remove properties by setting them to `undefined`:
   type: "updateNode",
   nodeName: "HTTP Request",
   updates: {
-    continueOnFail: undefined,  // Remove old
+    continueOnFail: null,  // Remove old
     onError: "continueErrorOutput"  // Add new
   }
 }
@@ -607,11 +610,15 @@ update → update → update → ... (56s avg between edits)
 7. **Auto-sanitization** runs on all operations
 8. Use **n8n_deploy_template** for quick starts
 
-**New Tools**:
+**Additional Tools**:
 - `n8n_deploy_template` - Deploy templates directly
 - `n8n_workflow_versions` - Version control & rollback
 - `n8n_test_workflow` - Trigger execution
 - `n8n_executions` - Manage executions
+- `n8n_manage_datatable` - Data table and row management
+- `n8n_delete_workflow` - Permanently delete workflows
+- `n8n_list_workflows` - List workflows with filtering
+- `n8n_update_full_workflow` - Full workflow replacement
 
 **Related**:
 - [SEARCH_GUIDE.md](SEARCH_GUIDE.md) - Find nodes to add

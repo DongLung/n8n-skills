@@ -614,13 +614,15 @@ n8n_update_partial_workflow({
 ```
 
 ### Strategy 4: Use Auto-fix
-**When**: Operator structure errors
+**When**: Validation errors that can be automatically resolved
 
 **Steps**:
 ```javascript
+// Preview fixes (default - doesn't apply)
 n8n_autofix_workflow({
   id: "workflow-id",
-  applyFixes: false  // Preview first
+  applyFixes: false,
+  confidenceThreshold: "medium"  // high, medium, low
 })
 
 // Review fixes, then apply
@@ -629,6 +631,43 @@ n8n_autofix_workflow({
   applyFixes: true
 })
 ```
+
+---
+
+## Auto-Fix Capabilities
+
+The `n8n_autofix_workflow` tool can fix these issue types:
+
+1. **expression-format** - Missing `=` prefix in expressions (e.g., `{{ $json.field }}` → `={{ $json.field }}`)
+2. **typeversion-correction** - Downgrades nodes with unsupported typeVersions
+3. **error-output-config** - Removes conflicting onError settings
+4. **node-type-correction** - Fixes unknown node types using similarity matching (90%+ confidence)
+5. **webhook-missing-path** - Generates UUIDs for webhook nodes missing path configuration
+6. **typeversion-upgrade** - Smart upgrades to latest node versions with auto-migration
+7. **version-migration** - Guidance for complex breaking changes requiring manual steps
+
+**Confidence levels**: `high` (90%+, safe to auto-apply), `medium` (70-89%, review recommended), `low` (<70%, manual review required)
+
+```javascript
+// Preview all fixes
+n8n_autofix_workflow({id: "workflow-id"})
+
+// Only apply high-confidence fixes
+n8n_autofix_workflow({
+  id: "workflow-id",
+  applyFixes: true,
+  confidenceThreshold: "high"
+})
+
+// Target specific fix types
+n8n_autofix_workflow({
+  id: "workflow-id",
+  fixTypes: ["expression-format", "typeversion-upgrade"],
+  applyFixes: true
+})
+```
+
+**Post-update guidance**: For version upgrades, check the `postUpdateGuidance` field in the response for step-by-step migration instructions.
 
 ---
 

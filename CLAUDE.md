@@ -83,7 +83,7 @@ The n8n-mcp server provides these unified tools:
 
 ### Workflow Management
 - `n8n_create_workflow` - Create new workflows
-- `n8n_update_partial_workflow` - Incremental updates (17 operation types including `activateWorkflow`)
+- `n8n_update_partial_workflow` - Incremental updates (18 operation types including `activateWorkflow`, `transferWorkflow`)
 - `n8n_validate_workflow` - Validate by ID
 - `n8n_autofix_workflow` - Auto-fix common issues
 - `n8n_deploy_template` - Deploy template to n8n instance
@@ -91,9 +91,18 @@ The n8n-mcp server provides these unified tools:
 - `n8n_test_workflow` - Test execution
 - `n8n_executions` - Manage executions
 
+### Data Tables
+- `n8n_manage_datatable` - Manage data tables and rows (CRUD, filtering, dry-run)
+
 ### Templates
 - `search_templates` - Multiple modes (keyword, by_nodes, by_task, by_metadata)
 - `get_template` - Get template details
+
+### Other Workflow Tools
+- `n8n_list_workflows` - List workflows with filtering/pagination
+- `n8n_get_workflow` - Get workflow details (full, structure, minimal modes)
+- `n8n_delete_workflow` - Permanently delete workflows
+- `n8n_update_full_workflow` - Full workflow replacement
 
 ### Guides
 - `tools_documentation` - Meta-documentation for all tools
