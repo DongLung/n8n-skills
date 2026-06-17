@@ -29,12 +29,17 @@ n8n-skills/
 │   ├── n8n-node-configuration/
 │   ├── n8n-code-javascript/
 │   ├── n8n-code-python/
-│   └── n8n-code-tool/
+│   ├── n8n-code-tool/
+│   └── using-n8n-mcp-skills/  # Always-on router skill (loaded by SessionStart hook)
+├── hooks/                 # Enforcement layer: hooks.json + SessionStart/PreToolUse/PostToolUse scripts
 ├── evaluations/           # Test scenarios for each skill
 ├── docs/                  # Documentation
 ├── dist/                  # Distribution packages
+├── NOTICES                # Attribution for Apache-2.0 material adapted from n8n-io/skills
 └── .claude-plugin/        # Claude Code plugin configuration
 ```
+
+**Enforcement layer (hooks/):** the plugin ships hooks that surface the right skill at the moment of decision. `session-start.sh` injects the `using-n8n-mcp-skills` router every session; PreToolUse hooks fire node-specific reminders on `get_node` and one-shot reminders on create/update/validate/test; the PostToolUse hook parses `validate_workflow`'s node JSON and routes to the relevant skills. Hooks run only in the Claude Code / Codex plugin install (not Claude.ai zip uploads), fail open, and never block a tool call. Attribution for the adapted scripts lives in `NOTICES` and the script headers — never inside agent-facing SKILL.md content.
 
 ## The 8 Skills
 

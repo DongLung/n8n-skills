@@ -14,7 +14,7 @@
 
 ## 🎯 What is this?
 
-This repository contains **8 complementary Claude Code skills** that teach AI assistants how to build production-ready n8n workflows using the [n8n-mcp](https://github.com/czlonkowski/n8n-mcp) MCP server.
+This repository contains **8 complementary Claude Code skills** — plus an always-on router skill and a hooks enforcement layer — that teach AI assistants how to build production-ready n8n workflows using the [n8n-mcp](https://github.com/czlonkowski/n8n-mcp) MCP server.
 
 ### Why These Skills Exist
 
@@ -134,6 +134,18 @@ Write code for the AI-agent-callable Custom Code Tool (`@n8n/n8n-nodes-langchain
 - Sandbox limits: no `$input`, `$helpers`, `$json`, `$getWorkflowStaticData`, no state across calls
 - Three signature error strings with causes and fixes
 - When to use Code Tool vs `toolWorkflow` vs HTTP Request Tool
+
+---
+
+## 🪝 Enforcement Layer (hooks + router)
+
+Beyond the capability skills, the plugin ships an **always-on enforcement layer** so the right guidance surfaces at the moment of decision — not only when a query happens to match a skill description.
+
+- **Router skill (`using-n8n-mcp-skills`)** — loaded into every session by a `SessionStart` hook. It routes you to the right skill, summarizes every n8n-mcp tool, and states the cross-cutting rules. It re-fires on resume/clear/compact so it survives context compaction.
+- **PreToolUse hooks** — before high-impact n8n-mcp calls, a short reminder points at the relevant skill. Looking up a Set, Code, Merge, Loop Over Items, DateTime, Data Table, or AI Agent node via `get_node` fires a node-specific reminder (and re-fires each time, because a re-lookup usually means you're reconsidering the same decision).
+- **PostToolUse hook** — after `validate_workflow`, it inspects the workflow's node types and routes you to the skills that own the remaining risks, with the reminder that *validation passing is necessary, not sufficient*.
+
+Hooks run only in the **Claude Code / Codex plugin** install. On Claude.ai (individual skill uploads) the skills still activate by description — the pack degrades gracefully, just without the proactive nudges. Every hook fails open and never blocks a tool call.
 
 ---
 
@@ -281,6 +293,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 **Conceived by Romuald Członkowski**
 - Website: [www.aiadvisors.pl/en](https://www.aiadvisors.pl/en)
 - Part of the [n8n-mcp project](https://github.com/czlonkowski/n8n-mcp)
+
+The hooks enforcement layer adapts patterns from the official [n8n Skills](https://github.com/n8n-io/skills) project (Apache-2.0), retargeted for n8n-mcp and rewritten in our own voice. See [NOTICES](NOTICES).
 
 ---
 

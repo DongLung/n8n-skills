@@ -5,7 +5,7 @@
 set -e
 
 DIST_DIR="dist"
-VERSION="1.12.0"
+VERSION="1.13.0"
 
 echo "🔨 Building n8n-skills distribution packages..."
 
@@ -29,6 +29,7 @@ SKILLS=(
     "n8n-code-javascript"
     "n8n-code-python"
     "n8n-code-tool"
+    "using-n8n-mcp-skills"
 )
 
 for skill in "${SKILLS[@]}"; do
@@ -40,8 +41,11 @@ done
 echo "📦 Building complete bundle for Claude Code..."
 zip -rq "$DIST_DIR/n8n-mcp-skills-v${VERSION}.zip" \
     .claude-plugin/ \
+    hooks/ \
     README.md \
     LICENSE \
+    NOTICES \
+    NOTICES-APACHE-2.0.txt \
     skills/ \
     -x "*.DS_Store" -x "*-workspace/*" -x "*-workspace/"
 
