@@ -98,13 +98,13 @@ Operation-aware node configuration guidance.
 ### 6. **n8n Code JavaScript**
 Write effective JavaScript code in n8n Code nodes.
 
-**Activates when**: Writing JavaScript in Code nodes, troubleshooting Code node errors, making HTTP requests with $helpers, working with dates.
+**Activates when**: Writing JavaScript in Code nodes, troubleshooting Code node errors, making HTTP requests with `this.helpers` (the `$helpers` global), working with dates.
 
 **Key Features**:
 - Data access patterns ($input.all(), $input.first(), $input.item)
 - **Critical gotcha**: Webhook data under `$json.body`
 - Correct return format: `[{json: {...}}]`
-- Built-in functions ($helpers.httpRequest(), DateTime, $jmespath())
+- Built-in functions (`this.helpers.httpRequest()` — the bare `$helpers` global is undefined in the task-runner sandbox; prefer the HTTP Request node for non-trivial/authenticated calls — DateTime, $jmespath())
 - Top 5 error patterns with solutions (covering 62%+ of failures)
 - 10 production-tested patterns
 
