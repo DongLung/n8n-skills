@@ -15,8 +15,11 @@ docker compose up -d           # recreates only changed services; volumes/data p
 docker compose exec n8n n8n --version
 ```
 
+(The docs' own sequence inserts `docker compose down` between `pull` and `up -d`; skipping it as
+above avoids the full-stack teardown and is equally safe for data — either works.)
+
 - **Queue mode:** `pull` + `up -d` updates main and workers together — keep them on the **same
-  version** (a mixed-version cluster misbehaves). Review the release notes before a major bump.
+  version** (a mixed-version cluster misbehaves).
 - On restart, containers get `N8N_GRACEFUL_SHUTDOWN_TIMEOUT` (default 30 s) to finish in-flight
   executions before being killed — raise it if long-running workflows keep getting cut off
   mid-update. (The old `QUEUE_WORKER_TIMEOUT` is deprecated in favor of this.)
@@ -25,9 +28,11 @@ docker compose exec n8n n8n --version
   document no downgrade path — so once the new version has booted against the DB, a clean
   rollback means old image tag **plus restoring the pre-update DB backup**. This is why the
   backup below comes *before* the update, not after it breaks.
-- Update deliberately but regularly (docs suggest at least monthly — old versions miss security
-  fixes) and read the release notes for breaking changes before any major bump.
-  Official update guide: <https://docs.n8n.io/deploy/host-n8n/keep-n8n-running/update-n8n>.
+- Update deliberately but regularly (docs suggest at least monthly, so you never jump many
+  versions at once) and read the release notes for breaking changes before **every** update, not
+  just majors. For instances a business depends on, docs recommend trying the update on a
+  staging copy first. Official update guide:
+  <https://docs.n8n.io/deploy/host-n8n/keep-n8n-running/update-n8n>.
 
 ## Back up — what actually matters
 

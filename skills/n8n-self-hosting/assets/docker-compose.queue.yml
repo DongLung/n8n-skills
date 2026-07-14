@@ -79,6 +79,8 @@ services:
       - n8n_net
 
   postgres:
+    # n8n supports "actively maintained" Postgres versions — 16 is fine through ~2028;
+    # revisit the pin when it nears EOL.
     image: postgres:16
     restart: unless-stopped
     environment:
