@@ -5,7 +5,7 @@
 set -e
 
 DIST_DIR="dist"
-VERSION="1.23.0"
+VERSION="1.24.0"
 
 echo "🔨 Building n8n-skills distribution packages..."
 
